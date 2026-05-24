@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
+    <name>Remove grouping</name>
+    <name lang="de">Gruppierung entfernen</name>
+
+    <id>io.github.cr7pt0gr4ph7.inkscape.replace_groups_with_children</id>
+
+    <effect>
+        <object-type>all</object-type>
+        <effects-menu>
+            <submenu name="Groups"/>
+        </effects-menu>
+    </effect>
+
+    <script>
+        <command location="inx" interpreter="python">replace_group_with_children.py</command>
+    </script>
+</inkscape-extension>
