@@ -27,7 +27,7 @@ class EPSPath:
     def close(self):
         self.closed = True
 
-    def to_svg_path(self, y_flip=True):
+    def to_svg_path(self, y_flip=False):
         parts = []
 
         for cmd in self.commands:
@@ -226,7 +226,7 @@ class EPSPathImportExtension(inkex.EffectExtension):
         imported_count = 0
 
         for p in paths:
-            svg_d = p.to_svg_path(y_flip=True)
+            svg_d = p.to_svg_path()
 
             if not svg_d.strip():
                 continue
