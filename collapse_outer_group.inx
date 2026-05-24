@@ -3,7 +3,7 @@
     <name>Collapse Outer Group</name>
     <name lang="de">Äußere Gruppen zusammenfassen</name>
 
-    <id>io.github.cr7pt0gr4ph7.inkscape.collapse_outer_group</id>
+    <id>io.github.cr7pt0gr4ph7.inkscape_extensions.collapse_outer_group</id>
 
     <effect>
         <object-type>all</object-type>

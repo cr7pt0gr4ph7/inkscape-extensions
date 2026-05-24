@@ -2,7 +2,7 @@
 <inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
     <name>Convert line+curve to smooth curve</name>
     <!-- <name lang="de">Linie+Kurve in glatte Kurve umwandeln</name> -->
-    <id>io.github.cr7pt0gr4ph7.inkscape.smooth_from_line</id>
+    <id>io.github.cr7pt0gr4ph7.inkscape_extensions.smooth_from_line</id>
 
     <effect>
         <object-type>path</object-type>

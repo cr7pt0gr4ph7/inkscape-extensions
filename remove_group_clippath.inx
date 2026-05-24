@@ -3,7 +3,7 @@
     <name>Remove clip path from groups</name>
     <name lang="de">Ausschneidemaske von Gruppen entfernen</name>
 
-    <id>io.github.cr7pt0gr4ph7.inkscape.remove_group_clippath</id>
+    <id>io.github.cr7pt0gr4ph7.inkscape_extensions.remove_group_clippath</id>
 
     <effect>
         <object-type>all</object-type>

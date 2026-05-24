@@ -3,7 +3,7 @@
     <name>Promote Child Transform to Group</name>
     <name lang="de">Transformation des enthaltenen Elements auf die Gruppe anwenden</name>
 
-    <id>io.github.cr7pt0gr4ph7.promote_child_transform</id>
+    <id>io.github.cr7pt0gr4ph7.inkscape_extensions.promote_child_transform</id>
 
     <effect>
         <object-type>g</object-type>

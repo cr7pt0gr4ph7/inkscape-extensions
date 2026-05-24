@@ -3,7 +3,7 @@
     <name>Remove objects with empty clip path</name>
     <name lang="de">Objekte mit leerer Ausschneidemaske entfernen</name>
 
-    <id>io.github.cr7pt0gr4ph7.inkscape.remove_objects_with_empty_clippath</id>
+    <id>io.github.cr7pt0gr4ph7.inkscape_extensions.remove_objects_with_empty_clippath</id>
 
     <effect>
         <object-type>all</object-type>

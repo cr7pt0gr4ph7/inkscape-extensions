@@ -3,7 +3,7 @@
     <name>Remove grouping</name>
     <name lang="de">Gruppierung entfernen</name>
 
-    <id>io.github.cr7pt0gr4ph7.inkscape.replace_groups_with_children</id>
+    <id>io.github.cr7pt0gr4ph7.inkscape_extensions.replace_groups_with_children</id>
 
     <effect>
         <object-type>all</object-type>

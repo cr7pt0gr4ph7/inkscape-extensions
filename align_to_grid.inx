@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
+    <name>Align to Grid</name>
+    <name lang="de">An Gitter ausrichten</name>
+
+    <id>io.github.cr7pt0gr4ph7.inkscape_extensions.align_to_grid</id>
+
+    <param name="align_vertical" type="bool" gui-text="Align Vertically">false</param>
+
+    <param
+        name="vertical_distance"
+        type="float"
+        min="0.0"
+        max="1000000.0"
+        precision="3"
+        gui-text="Vertical Baseline Distance">
+        10.0
+    </param>
+
+    <param name="align_horizontal" type="bool" gui-text="Align Horizontally">false</param>
+
+    <param
+        name="horizontal_distance"
+        type="float"
+        min="0.0"
+        max="1000000.0"
+        precision="3"
+        gui-text="Horizontal Baseline Distance">
+        10.0
+    </param>
+
+    <label appearance="header">Behavior</label>
+
+    <label>Align objects to a baseline grid defined by the specified distances.</label>
+
+    <label>The grid origin is the topmost-leftmost selected element.</label>
+    <label>Vertical alignment snaps object left edges to the nearest vertical baseline.</label>
+    <label>Horizontal alignment snaps object top edges to the nearest horizontal baseline.</label>
+    <label>Objects retain their size and shape; only position changes.</label>
+
+    <effect>
+        <object-type>all</object-type>
+        <effects-menu>
+            <submenu name="Arrange"/>
+        </effects-menu>
+    </effect>
+
+    <script>
+        <command location="inx" interpreter="python">align_to_grid.py</command>
+    </script>
+</inkscape-extension>

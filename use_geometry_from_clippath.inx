@@ -3,7 +3,7 @@
     <name>Use geometry from clip path</name>
     <name lang="de">Geometrie aus Ausschneidemaske verwenden</name>
 
-    <id>io.github.cr7pt0gr4ph7.inkscape.use_geometry_from_clippath</id>
+    <id>io.github.cr7pt0gr4ph7.inkscape_extensions.use_geometry_from_clippath</id>
 
     <effect>
         <object-type>all</object-type>
