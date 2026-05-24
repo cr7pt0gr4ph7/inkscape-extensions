@@ -8,6 +8,16 @@ class AlignToGrid(inkex.EffectExtension):
 
     def add_arguments(self, pars):
         pars.add_argument(
+            "--align_mode",
+            default="bbox",
+        )
+
+        pars.add_argument(
+            "--measurement_unit",
+            default="document",
+        )
+
+        pars.add_argument(
             "--align_vertical",
             type=inkex.Boolean,
             default=False,
@@ -31,6 +41,55 @@ class AlignToGrid(inkex.EffectExtension):
             default=10.0,
         )
 
+    def convert_to_user_units(self, value, unit):
+        if unit == "user":
+            return value
+
+        if unit == "document":
+            document_unit = self.svg.unit
+            return self.svg.unittouu(f"{value}{document_unit}")
+
+        if unit == "display":
+            display_unit = self.svg.document_unit
+            return self.svg.unittouu(f"{value}{display_unit}")
+
+
+        return self.svg.unittouu(f"{value}{unit}")
+
+    def get_alignment_coordinates(self, element, align_mode):
+        bbox = element.bounding_box()
+
+        if align_mode == "xy":
+            x_attr = element.get("x")
+            y_attr = element.get("y")
+
+            x = float(x_attr) if x_attr is not None else bbox.left
+            y = float(y_attr) if y_attr is not None else bbox.top
+
+            return x, y
+
+        return bbox.left, bbox.top
+
+    def move_element(self, element, dx, dy, align_mode):
+        if align_mode == "xy":
+            x_attr = element.get("x")
+            y_attr = element.get("y")
+
+            if x_attr is not None:
+                element.set("x", str(float(x_attr) + dx))
+
+            if y_attr is not None:
+                element.set("y", str(float(y_attr) + dy))
+
+            if x_attr is None and y_attr is None:
+                transform = Transform.translate(dx, dy)
+                element.transform = transform @ element.transform
+
+            return
+
+        transform = Transform.translate(dx, dy)
+        element.transform = transform @ element.transform
+
     def effect(self):
         if not self.svg.selection:
             inkex.errormsg("Please select at least one object.")
@@ -39,33 +98,43 @@ class AlignToGrid(inkex.EffectExtension):
         align_vertical = self.options.align_vertical
         align_horizontal = self.options.align_horizontal
 
-        vertical_distance = self.options.vertical_distance
-        horizontal_distance = self.options.horizontal_distance
-
         if not align_vertical and not align_horizontal:
             inkex.errormsg(
                 "Enable at least one alignment direction."
             )
             return
 
-        # Gather bounding boxes
+        align_mode = self.options.align_mode
+        unit = self.options.measurement_unit
+
+        vertical_distance = self.convert_to_user_units(
+            self.options.vertical_distance,
+            unit,
+        )
+
+        horizontal_distance = self.convert_to_user_units(
+            self.options.horizontal_distance,
+            unit,
+        )
+
         items = []
 
         for element in self.svg.selection.values():
-            bbox = element.bounding_box()
-            items.append((element, bbox))
+            x, y = self.get_alignment_coordinates(
+                element,
+                align_mode,
+            )
 
-        # Determine origin from topmost-leftmost selected element
-        min_x = min(bbox.left for _, bbox in items)
-        min_y = min(bbox.top for _, bbox in items)
+            items.append((element, x, y))
 
-        for element, bbox in items:
+        min_x = min(x for _, x, _ in items)
+        min_y = min(y for _, _, y in items)
+
+        for element, current_x, current_y in items:
             dx = 0.0
             dy = 0.0
 
             if align_vertical and vertical_distance > 0:
-                current_x = bbox.left
-
                 relative_x = current_x - min_x
 
                 snapped_x = (
@@ -77,8 +146,6 @@ class AlignToGrid(inkex.EffectExtension):
                 dx = snapped_x - current_x
 
             if align_horizontal and horizontal_distance > 0:
-                current_y = bbox.top
-
                 relative_y = current_y - min_y
 
                 snapped_y = (
@@ -89,8 +156,7 @@ class AlignToGrid(inkex.EffectExtension):
 
                 dy = snapped_y - current_y
 
-            transform = Transform.translate(dx, dy)
-            element.transform = transform @ element.transform
+            self.move_element(element, dx, dy, align_mode)
 
 
 if __name__ == "__main__":
