@@ -2,6 +2,7 @@
 
 import inkex
 from inkex import Transform
+from inkex import TextElement
 
 
 class AlignToGrid(inkex.EffectExtension):
@@ -81,6 +82,24 @@ class AlignToGrid(inkex.EffectExtension):
             if y_attr is not None:
                 element.set("y", str(float(y_attr) + dy))
 
+            # Move tspans together with parent text element
+            if isinstance(element, TextElement):
+                for tspan in element.tspans():
+                    child_x = tspan.get("x")
+                    child_y = tspan.get("y")
+
+                    if child_x is not None:
+                        tspan.set(
+                            "x",
+                            str(float(child_x) + dx),
+                        )
+
+                    if child_y is not None:
+                        tspan.set(
+                            "y",
+                            str(float(child_y) + dy),
+                        )
+
             if x_attr is None and y_attr is None:
                 transform = Transform.translate(dx, dy)
                 element.transform = transform @ element.transform
@@ -134,23 +153,23 @@ class AlignToGrid(inkex.EffectExtension):
             dx = 0.0
             dy = 0.0
 
-            if align_vertical and vertical_distance > 0:
+            if align_horizontal and horizontal_distance > 0:
                 relative_x = current_x - min_x
 
                 snapped_x = (
-                    round(relative_x / vertical_distance)
-                    * vertical_distance
+                    round(relative_x / horizontal_distance)
+                    * horizontal_distance
                     + min_x
                 )
 
                 dx = snapped_x - current_x
 
-            if align_horizontal and horizontal_distance > 0:
+            if align_vertical and vertical_distance > 0:
                 relative_y = current_y - min_y
 
                 snapped_y = (
-                    round(relative_y / horizontal_distance)
-                    * horizontal_distance
+                    round(relative_y / vertical_distance)
+                    * vertical_distance
                     + min_y
                 )
 

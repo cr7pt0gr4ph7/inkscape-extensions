@@ -18,13 +18,15 @@
         <option value="xy">Align Object Origins</option>
     </param>
 
+    <spacer/>
+
     <param
         name="measurement_unit"
         type="optiongroup"
         appearance="combo"
         gui-text="Measurement Unit">
-        <option value="document" default="True">Document Unit</option>
-        <option value="display">Display Unit</option>
+        <option value="document" default="True">Document Units</option>
+        <option value="display">Display Units</option>
         <option value="user">User Units</option>
         <option value="px">px</option>
         <option value="mm">mm</option>
