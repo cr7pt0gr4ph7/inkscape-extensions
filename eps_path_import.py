@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 
 import re
+import math
 import inkex
-
 from inkex import PathElement, Group
-from lxml import etree
 
 
 FLOAT_RE = r"[-+]?(?:\d*\.\d+|\d+\.?(?:\d*)?)(?:[eE][-+]?\d+)?"
@@ -65,6 +64,28 @@ class EPSPath:
 
 
 class EPSHeuristicParser:
+    """
+    Best-effort EPS parser.
+
+    This parser intentionally uses heuristics rather than trying to fully
+    interpret PostScript.
+
+    Supported operators:
+        mo / moveto
+        li / lineto
+        cv / curveto
+        cp / closepath
+        np / newpath
+        clp
+
+    It can recover geometry from snippets like:
+
+        np
+        55.0727 48.7511 mo
+        54.8976 48.0793 54.7479 47.4011 54.6216 46.7166 cv
+        ...
+        clp
+    """
 
     MOVE_OPS = {"mo", "moveto", "m"}
     LINE_OPS = {"li", "lineto", "l"}
@@ -74,6 +95,7 @@ class EPSHeuristicParser:
     CLIP_OPS = {"clp", "clip"}
 
     def __init__(self, text):
+        self.text = text
         self.tokens = TOKEN_RE.findall(text)
         self.stack = []
         self.paths = []
@@ -117,7 +139,6 @@ class EPSHeuristicParser:
 
             if lower in self.MOVE_OPS:
                 vals = self.pop_numbers(2)
-
                 if vals:
                     x, y = vals
 
@@ -125,37 +146,40 @@ class EPSHeuristicParser:
                         self.current_path = EPSPath()
 
                     self.current_path.move_to(x, y)
-
                 continue
 
             if lower in self.LINE_OPS:
                 vals = self.pop_numbers(2)
-
                 if vals and self.current_path:
                     x, y = vals
                     self.current_path.line_to(x, y)
-
                 continue
 
             if lower in self.CURVE_OPS:
                 vals = self.pop_numbers(6)
-
                 if vals and self.current_path:
-                    self.current_path.curve_to(*vals)
-
+                    x1, y1, x2, y2, x3, y3 = vals
+                    self.current_path.curve_to(
+                        x1, y1,
+                        x2, y2,
+                        x3, y3
+                    )
                 continue
 
             if lower in self.CLOSE_OPS:
                 if self.current_path:
                     self.current_path.close()
-
                 continue
 
             if lower in self.CLIP_OPS:
+                # Often indicates the end of a clipping path.
+                # We preserve it as a normal path.
                 self.finish_current_path()
                 self.stack.clear()
                 continue
 
+            # Unknown operator:
+            # heuristic recovery by clearing pathological stack growth.
             if len(self.stack) > 64:
                 self.stack = self.stack[-16:]
 
@@ -163,17 +187,27 @@ class EPSHeuristicParser:
         return self.paths
 
 
-class EPSPathImport(inkex.InputExtension):
-    """
-    Heuristic EPS geometry importer.
+class EPSPathImportExtension(inkex.EffectExtension):
 
-    This is intentionally NOT a full PostScript interpreter.
-    It scans EPS text and reconstructs SVG paths from recognizable
-    geometry operators.
-    """
+    def add_arguments(self, pars):
+        pars.add_argument(
+            "--eps_file",
+            type=str,
+            help="EPS file to parse"
+        )
 
-    def load(self, stream):
-        eps_text = stream.read().decode("latin-1", errors="ignore")
+    def effect(self):
+        eps_path = self.options.eps_file
+
+        if not eps_path:
+            raise inkex.AbortExtension("No EPS file selected")
+
+        try:
+            with open(eps_path, "r", encoding="latin-1", errors="ignore") as f:
+                eps_text = f.read()
+
+        except Exception as e:
+            raise inkex.AbortExtension(f"Unable to read EPS file: {e}")
 
         parser = EPSHeuristicParser(eps_text)
         paths = parser.parse()
@@ -183,29 +217,22 @@ class EPSPathImport(inkex.InputExtension):
                 "No path geometry could be extracted from the EPS file"
             )
 
-        svg = etree.Element(
-            inkex.addNS("svg", "svg"),
-            nsmap=inkex.NSS
-        )
-
-        svg.set("width", "1000")
-        svg.set("height", "1000")
-        svg.set("viewBox", "0 -1000 1000 1000")
+        root = self.document.getroot()
 
         group = Group()
         group.label = "Imported EPS Geometry"
-        svg.append(group)
+        root.append(group)
 
         imported_count = 0
 
         for p in paths:
-            d = p.to_svg_path(y_flip=True)
+            svg_d = p.to_svg_path(y_flip=True)
 
-            if not d.strip():
+            if not svg_d.strip():
                 continue
 
             node = PathElement()
-            node.set("d", d)
+            node.path = svg_d
 
             node.style = {
                 "fill": "none",
@@ -220,8 +247,6 @@ class EPSPathImport(inkex.InputExtension):
             f"Imported {imported_count} path(s) from EPS"
         )
 
-        return etree.ElementTree(svg)
-
 
 if __name__ == "__main__":
-    EPSPathImport().run()
+    EPSPathImportExtension().run()

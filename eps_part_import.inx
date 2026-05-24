@@ -1,14 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
     <name>EPS Geometry Import</name>
-    <id>io.github.cr7pt0gr4ph7.eps_path_import</id>
+    <id>io.github.cr7pt0gr4ph7.inkscape_extensions.eps_path_import</id>
 
-    <input>
-        <extension>.eps</extension>
-        <mimetype>application/postscript</mimetype>
-        <filetypename>Encapsulated PostScript (Path Only) (*.eps)</filetypename>
-        <filetypetooltip>Import path geometry heuristically from EPS files</filetypetooltip>
-    </input>
+    <param
+        name="eps_file"
+        type="path"
+        gui-text="EPS File"
+        mode="file">
+    </param>
+
+    <effect>
+        <object-type>all</object-type>
+        <effects-menu>
+            <submenu name="Import"/>
+        </effects-menu>
+    </effect>
 
     <script>
         <command location="inx" interpreter="python">eps_path_import.py</command>
