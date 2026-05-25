@@ -3,7 +3,7 @@
     <name>Copy selected objects to pages</name>
     <description>Copy the selected objects to other pages, preserving their position on the page.</description>
 
-    <name lang="de">Auswahl kopieren (auf weitere Seiten)</name>
+    <name lang="de">Auswahl auf weitere Seiten kopieren</name>
     <description lang="de">Kopiert die ausgewählten Objekte auf andere Seiten und erhält dabei ihre Position auf der Seite.</description>
 
     <id>io.github.cr7pt0gr4ph7.inkscape_extensions.copy_selection_to_pages</id>
