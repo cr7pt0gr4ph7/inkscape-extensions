@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
     <name>Simplify Text Structure</name>
-    <id>org.example.text_simplify_structure</id>
+    <name lang="de">Textstruktur vereinfachen</name>
+
+    <description>Simplify the structure of text elements by pushing common styles up to parent tspans and flattening unnecessary nested tspans.</description>
+    <description lang="de">Struktur von Textelementen vereinfachen, indem gemeinsame Stile nach oben verschoben und unnötige verschachtelte tspans entfernt werden.</description>
+
+    <id>io.github.cr7pt0gr4ph7.inkscape_extensions.text_simplify_structure</id>
 
     <effect>
         <object-type>text</object-type>
