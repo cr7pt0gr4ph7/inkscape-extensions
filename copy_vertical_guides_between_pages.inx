@@ -5,22 +5,20 @@
 
     <id>io.github.cr7pt0gr4ph7.inkscape_extensions.copy_vertical_guides_between_pages</id>
 
-    <param name="source_page" type="string" gui-text="Source page (1-based index or ID)">
-        1
-    </param>
+    <param name="source_page" type="string" gui-text="Source page (1-based index or ID)">1</param>
 
-    <param name="target_pages" type="string" gui-text="Target pages (e.g. 1,2-4,7)">
-        2
-    </param>
+    <spacer />
 
-    <param name="remove_existing" type="bool" gui-text="Remove existing vertical guides from target pages">
-        false
-    </param>
+    <param name="target_pages" type="string" gui-text="Target pages (e.g. 1,2-4,7)">2</param>
+
+    <spacer />
+
+    <param name="remove_existing" type="bool" gui-text="Remove existing vertical guides from target pages">false</param>
 
     <effect>
         <object-type>all</object-type>
         <effects-menu>
-            <submenu name="Pages"/>
+            <submenu name="Document"/>
         </effects-menu>
     </effect>
 

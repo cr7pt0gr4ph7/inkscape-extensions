@@ -2,6 +2,7 @@
 
 import re
 import inkex
+from inkex import Guide, Vector2d
 from lxml import etree
 
 
@@ -66,10 +67,7 @@ class CopyVerticalGuidesBetweenPages(inkex.EffectExtension):
                 continue
 
             if self.options.remove_existing:
-                self.remove_vertical_guides_from_page(
-                    target_page,
-                    pages,
-                )
+                self.remove_vertical_guides_from_page(target_page, pages)
 
             self.copy_guides_between_pages(
                 source_page,
@@ -78,30 +76,7 @@ class CopyVerticalGuidesBetweenPages(inkex.EffectExtension):
             )
 
     def get_pages(self):
-        page_elements = self.document.xpath(
-            "//inkscape:page",
-            namespaces=NSMAP,
-        )
-
-        result = []
-
-        for index, page in enumerate(page_elements):
-            x = float(page.get("x", "0"))
-            y = float(page.get("y", "0"))
-            width = float(page.get("width"))
-            height = float(page.get("height"))
-
-            result.append({
-                "element": page,
-                "index": index + 1,
-                "id": page.get("id"),
-                "x": x,
-                "y": y,
-                "width": width,
-                "height": height,
-            })
-
-        return result
+        return self.svg.namedview.get_pages()
 
     def resolve_page_reference(
         self,
@@ -113,10 +88,7 @@ class CopyVerticalGuidesBetweenPages(inkex.EffectExtension):
         if re.fullmatch(r"\d+", text):
             page_index = int(text)
 
-            page = self.find_page_by_index(
-                pages,
-                page_index,
-            )
+            page = self.find_page_by_index(pages, page_index)
 
             if page is None:
                 raise inkex.AbortExtension(
@@ -125,10 +97,7 @@ class CopyVerticalGuidesBetweenPages(inkex.EffectExtension):
 
             return page
 
-        page = self.find_page_by_id(
-            pages,
-            text,
-        )
+        page = self.find_page_by_id(pages, text)
 
         if page is None:
             raise inkex.AbortExtension(
@@ -169,30 +138,24 @@ class CopyVerticalGuidesBetweenPages(inkex.EffectExtension):
                     start, end = end, start
 
                 for page_index in range(start, end + 1):
-                    page = self.find_page_by_index(
-                        pages,
-                        page_index,
-                    )
+                    page = self.find_page_by_index(pages, page_index)
 
                     if page is None:
                         raise inkex.AbortExtension(
                             f"Page index {page_index} does not exist."
                         )
 
-                    if page["id"] not in seen:
+                    if page.eid not in seen:
                         result.append(page)
-                        seen.add(page["id"])
+                        seen.add(page.eid)
 
                 continue
 
-            page = self.resolve_page_reference(
-                part,
-                pages,
-            )
+            page = self.resolve_page_reference(part, pages)
 
-            if page["id"] not in seen:
+            if page.eid not in seen:
                 result.append(page)
-                seen.add(page["id"])
+                seen.add(page.eid)
 
         return result
 
@@ -201,9 +164,8 @@ class CopyVerticalGuidesBetweenPages(inkex.EffectExtension):
         pages,
         page_index,
     ):
-        for page in pages:
-            if page["index"] == page_index:
-                return page
+        if page_index >= 1 and page_index <= len(pages):
+            return pages[page_index - 1]
 
         return None
 
@@ -213,7 +175,7 @@ class CopyVerticalGuidesBetweenPages(inkex.EffectExtension):
         page_id,
     ):
         for page in pages:
-            if page["id"] == page_id:
+            if page.eid == page_id:
                 return page
 
         return None
@@ -227,18 +189,11 @@ class CopyVerticalGuidesBetweenPages(inkex.EffectExtension):
 
         result = []
 
-        for guide in namedview.guides:
-            orientation = guide.get(
-                "orientation",
-                "",
-            )
-
-            if not self.is_vertical_guide(
-                orientation
-            ):
+        for guide in namedview.get_guides():
+            if not guide.is_vertical:
                 continue
 
-            guide_x = self.get_guide_x(guide)
+            guide_x = guide.position.x
 
             closest_page = self.find_closest_page_for_x(
                 guide_x,
@@ -259,18 +214,11 @@ class CopyVerticalGuidesBetweenPages(inkex.EffectExtension):
 
         guides_to_remove = []
 
-        for guide in namedview.guides:
-            orientation = guide.get(
-                "orientation",
-                "",
-            )
-
-            if not self.is_vertical_guide(
-                orientation
-            ):
+        for guide in namedview.get_guides():
+            if not guide.is_vertical:
                 continue
 
-            guide_x = self.get_guide_x(guide)
+            guide_x = guide.position.x
 
             closest_page = self.find_closest_page_for_x(
                 guide_x,
@@ -286,31 +234,6 @@ class CopyVerticalGuidesBetweenPages(inkex.EffectExtension):
             if parent is not None:
                 parent.remove(guide)
 
-    def is_vertical_guide(self, orientation):
-        parts = orientation.split(",")
-
-        if len(parts) != 2:
-            return False
-
-        try:
-            ox = float(parts[0])
-            oy = float(parts[1])
-        except ValueError:
-            return False
-
-        return (
-            abs(ox - 1.0) < 1e-6
-            and abs(oy) < 1e-6
-        )
-
-    def get_guide_x(self, guide):
-        pos = guide.get(
-            "position",
-            "0,0",
-        ).split(",")
-
-        return float(pos[0])
-
     def find_closest_page_for_x(
         self,
         x,
@@ -321,8 +244,8 @@ class CopyVerticalGuidesBetweenPages(inkex.EffectExtension):
 
         for page in pages:
             center_x = (
-                page["x"]
-                + page["width"] / 2.0
+                page.x
+                + page.width / 2.0
             )
 
             distance = abs(x - center_x)
@@ -342,40 +265,25 @@ class CopyVerticalGuidesBetweenPages(inkex.EffectExtension):
         target_page,
         guides,
     ):
-        source_x = source_page["x"]
-        target_x = target_page["x"]
+        source_x = source_page.x
+        target_x = target_page.x
 
         delta_x = target_x - source_x
 
         namedview = self.svg.namedview
 
         for guide in guides:
-            pos = guide.get(
-                "position",
-                "0,0",
-            ).split(",")
+            pos = guide.position
 
-            x = float(pos[0])
-            y = float(pos[1])
+            x = pos.x
+            y = pos.y
 
             new_x = x + delta_x
 
-            new_guide = etree.Element(
-                inkex.addNS(
-                    "guide",
-                    "sodipodi",
-                )
-            )
-
-            for key, value in guide.attrib.items():
-                new_guide.set(key, value)
-
-            new_guide.set(
-                "position",
-                f"{new_x},{y}"
-            )
-
+            new_guide = guide.copy()
+            new_guide.set_id(None)
             namedview.append(new_guide)
+            new_guide.set_position(new_x, y)
 
 
 if __name__ == "__main__":
