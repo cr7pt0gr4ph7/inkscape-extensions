@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
+    <name>Merge Duplicate Gradients</name>
+    <name lang="de">Gradienten deduplizieren</name>
+
+    <description>Finds gradients with identical properties and replaces them with a single shared gradient to reduce file size and improve performance.</description>
+    <description lang="de">Findet Gradienten mit identischen Eigenschaften und ersetzt sie durch einen einzigen gemeinsamen Gradienten, um die Dateigröße zu reduzieren und die Leistung zu verbessern.</description>
+
+    <id>io.github.cr7pt0gr4ph7.inkscape_extensions.merge_duplicate_gradients</id>
+
+    <effect>
+        <object-type>all</object-type>
+        <effects-menu>
+            <submenu name="Document"/>
+        </effects-menu>
+    </effect>
+
+    <script>
+        <command location="inx" interpreter="python">merge_duplicate_gradients.py</command>
+    </script>
+</inkscape-extension>
