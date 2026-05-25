@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
+    <name>Copy Selection To Pages</name>
+    <name lang="de">Auswahl auf weitere Seiten kopieren</name>
+
+    <id>io.github.cr7pt0gr4ph7.inkscape_extensions.copy_selection_to_pages</id>
+
+    <param name="target_pages" type="string" gui-text="Target pages"></param>
+    <param name="exclude_source_page" type="bool" gui-text="Exclude source page">true</param>
+
+    <effect>
+        <object-type>all</object-type>
+        <effects-menu>
+            <submenu name="Document"/>
+        </effects-menu>
+    </effect>
+
+    <script>
+        <command location="inx" interpreter="python">copy_selection_to_pages.py</command>
+    </script>
+</inkscape-extension>
