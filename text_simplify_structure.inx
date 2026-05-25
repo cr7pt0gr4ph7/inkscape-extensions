@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
+    <name>Simplify Text Structure</name>
+    <id>org.example.text_simplify_structure</id>
+
+    <effect>
+        <object-type>text</object-type>
+        <effects-menu>
+            <submenu name="Text"/>
+        </effects-menu>
+    </effect>
+
+    <script>
+        <command location="inx" interpreter="python">text_simplify_structure.py</command>
+    </script>
+</inkscape-extension>
