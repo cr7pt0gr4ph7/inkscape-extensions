@@ -3,7 +3,7 @@
     <name>Copy Vertical Guides between Pages</name>
     <description>Copy vertical guides from a source page to one or more target pages, preserving their position on the page.</description>
 
-    <name lang="de">Hilfslinien kopieren</name>
+    <name lang="de">Hilfslinien kopieren (auf weitere Seiten)</name>
     <description lang="de">Kopiert vertikale Hilfslinien von einer Quellseite auf eine oder mehrere Zielseiten und erhält dabei ihre Position auf der Seite.</description>
 
     <id>io.github.cr7pt0gr4ph7.inkscape_extensions.copy_vertical_guides_between_pages</id>
