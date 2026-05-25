@@ -19,16 +19,16 @@ class CopyVerticalGuidesBetweenPages(inkex.EffectExtension):
     def add_arguments(self, pars):
         pars.add_argument(
             "--source_page",
-            type=int,
-            default=1,
-            help="1-based index of the source page",
+            type=str,
+            default="1",
+            help="Source page index or ID",
         )
 
         pars.add_argument(
             "--target_pages",
             type=str,
             default="2",
-            help='Target page list/ranges like "1,2-4,7"',
+            help='Target page list/ranges like "1,2-4,page5"',
         )
 
         pars.add_argument(
@@ -42,32 +42,28 @@ class CopyVerticalGuidesBetweenPages(inkex.EffectExtension):
         pages = self.get_pages()
 
         if not pages:
-            raise inkex.AbortExtension("Document contains no pages.")
-
-        source_index = self.options.source_page - 1
-
-        if source_index < 0 or source_index >= len(pages):
             raise inkex.AbortExtension(
-                f"Source page {self.options.source_page} does not exist."
+                "Document contains no pages."
             )
 
-        target_indices = self.parse_page_range(
-            self.options.target_pages,
-            len(pages),
+        source_page = self.resolve_page_reference(
+            self.options.source_page,
+            pages,
         )
 
-        source_page = pages[source_index]
+        target_pages = self.parse_target_pages(
+            self.options.target_pages,
+            pages,
+        )
 
         source_guides = self.find_vertical_guides_for_page(
             source_page,
             pages,
         )
 
-        for target_index in target_indices:
-            if target_index == source_index:
+        for target_page in target_pages:
+            if target_page is source_page:
                 continue
-
-            target_page = pages[target_index]
 
             if self.options.remove_existing:
                 self.remove_vertical_guides_from_page(
@@ -82,14 +78,14 @@ class CopyVerticalGuidesBetweenPages(inkex.EffectExtension):
             )
 
     def get_pages(self):
-        pages = self.document.xpath(
+        page_elements = self.document.xpath(
             "//inkscape:page",
             namespaces=NSMAP,
         )
 
         result = []
 
-        for page in pages:
+        for index, page in enumerate(page_elements):
             x = float(page.get("x", "0"))
             y = float(page.get("y", "0"))
             width = float(page.get("width"))
@@ -97,6 +93,8 @@ class CopyVerticalGuidesBetweenPages(inkex.EffectExtension):
 
             result.append({
                 "element": page,
+                "index": index + 1,
+                "id": page.get("id"),
                 "x": x,
                 "y": y,
                 "width": width,
@@ -105,8 +103,47 @@ class CopyVerticalGuidesBetweenPages(inkex.EffectExtension):
 
         return result
 
-    def parse_page_range(self, text, max_pages):
-        result = set()
+    def resolve_page_reference(
+        self,
+        text,
+        pages,
+    ):
+        text = text.strip()
+
+        if re.fullmatch(r"\d+", text):
+            page_index = int(text)
+
+            page = self.find_page_by_index(
+                pages,
+                page_index,
+            )
+
+            if page is None:
+                raise inkex.AbortExtension(
+                    f"Page index {page_index} does not exist."
+                )
+
+            return page
+
+        page = self.find_page_by_id(
+            pages,
+            text,
+        )
+
+        if page is None:
+            raise inkex.AbortExtension(
+                f'Page ID "{text}" does not exist.'
+            )
+
+        return page
+
+    def parse_target_pages(
+        self,
+        text,
+        pages,
+    ):
+        result = []
+        seen = set()
 
         text = text.strip()
 
@@ -119,46 +156,86 @@ class CopyVerticalGuidesBetweenPages(inkex.EffectExtension):
             if not part:
                 continue
 
-            if "-" in part:
-                m = re.fullmatch(r"(\d+)\s*-\s*(\d+)", part)
+            range_match = re.fullmatch(
+                r"(\d+)\s*-\s*(\d+)",
+                part,
+            )
 
-                if not m:
-                    raise inkex.AbortExtension(
-                        f'Invalid range "{part}".'
-                    )
-
-                start = int(m.group(1))
-                end = int(m.group(2))
+            if range_match:
+                start = int(range_match.group(1))
+                end = int(range_match.group(2))
 
                 if start > end:
                     start, end = end, start
 
-                for i in range(start, end + 1):
-                    self.validate_page_number(i, max_pages)
-                    result.add(i - 1)
+                for page_index in range(start, end + 1):
+                    page = self.find_page_by_index(
+                        pages,
+                        page_index,
+                    )
 
-            else:
-                page_num = int(part)
-                self.validate_page_number(page_num, max_pages)
-                result.add(page_num - 1)
+                    if page is None:
+                        raise inkex.AbortExtension(
+                            f"Page index {page_index} does not exist."
+                        )
 
-        return sorted(result)
+                    if page["id"] not in seen:
+                        result.append(page)
+                        seen.add(page["id"])
 
-    def validate_page_number(self, page_num, max_pages):
-        if page_num < 1 or page_num > max_pages:
-            raise inkex.AbortExtension(
-                f"Page {page_num} is outside the valid range 1-{max_pages}."
+                continue
+
+            page = self.resolve_page_reference(
+                part,
+                pages,
             )
 
-    def find_vertical_guides_for_page(self, page, all_pages):
+            if page["id"] not in seen:
+                result.append(page)
+                seen.add(page["id"])
+
+        return result
+
+    def find_page_by_index(
+        self,
+        pages,
+        page_index,
+    ):
+        for page in pages:
+            if page["index"] == page_index:
+                return page
+
+        return None
+
+    def find_page_by_id(
+        self,
+        pages,
+        page_id,
+    ):
+        for page in pages:
+            if page["id"] == page_id:
+                return page
+
+        return None
+
+    def find_vertical_guides_for_page(
+        self,
+        page,
+        all_pages,
+    ):
         namedview = self.svg.namedview
 
         result = []
 
         for guide in namedview.guides:
-            orientation = guide.get("orientation", "")
+            orientation = guide.get(
+                "orientation",
+                "",
+            )
 
-            if not self.is_vertical_guide(orientation):
+            if not self.is_vertical_guide(
+                orientation
+            ):
                 continue
 
             guide_x = self.get_guide_x(guide)
@@ -183,9 +260,14 @@ class CopyVerticalGuidesBetweenPages(inkex.EffectExtension):
         guides_to_remove = []
 
         for guide in namedview.guides:
-            orientation = guide.get("orientation", "")
+            orientation = guide.get(
+                "orientation",
+                "",
+            )
 
-            if not self.is_vertical_guide(orientation):
+            if not self.is_vertical_guide(
+                orientation
+            ):
                 continue
 
             guide_x = self.get_guide_x(guide)
@@ -216,23 +298,39 @@ class CopyVerticalGuidesBetweenPages(inkex.EffectExtension):
         except ValueError:
             return False
 
-        return abs(ox - 1.0) < 1e-6 and abs(oy) < 1e-6
+        return (
+            abs(ox - 1.0) < 1e-6
+            and abs(oy) < 1e-6
+        )
 
     def get_guide_x(self, guide):
-        pos = guide.get("position", "0,0").split(",")
+        pos = guide.get(
+            "position",
+            "0,0",
+        ).split(",")
 
         return float(pos[0])
 
-    def find_closest_page_for_x(self, x, pages):
+    def find_closest_page_for_x(
+        self,
+        x,
+        pages,
+    ):
         best_page = None
         best_distance = None
 
         for page in pages:
-            center_x = page["x"] + page["width"] / 2.0
+            center_x = (
+                page["x"]
+                + page["width"] / 2.0
+            )
 
             distance = abs(x - center_x)
 
-            if best_distance is None or distance < best_distance:
+            if (
+                best_distance is None
+                or distance < best_distance
+            ):
                 best_distance = distance
                 best_page = page
 
@@ -252,7 +350,10 @@ class CopyVerticalGuidesBetweenPages(inkex.EffectExtension):
         namedview = self.svg.namedview
 
         for guide in guides:
-            pos = guide.get("position", "0,0").split(",")
+            pos = guide.get(
+                "position",
+                "0,0",
+            ).split(",")
 
             x = float(pos[0])
             y = float(pos[1])
@@ -260,7 +361,10 @@ class CopyVerticalGuidesBetweenPages(inkex.EffectExtension):
             new_x = x + delta_x
 
             new_guide = etree.Element(
-                inkex.addNS("guide", "sodipodi")
+                inkex.addNS(
+                    "guide",
+                    "sodipodi",
+                )
             )
 
             for key, value in guide.attrib.items():

@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
     <name>Copy Vertical Guides Between Pages</name>
-    <id>copy.vertical.guides.between.pages</id>
+    <name lang="de">Vertikale Hilfslinien zwischen Seiten kopieren</name>
 
-    <param name="source_page" type="int" min="1" max="9999" gui-text="Source page (1-based)">
+    <id>io.github.cr7pt0gr4ph7.inkscape_extensions.copy_vertical_guides_between_pages</id>
+
+    <param name="source_page" type="string" gui-text="Source page (1-based index or ID)">
         1
     </param>
 
