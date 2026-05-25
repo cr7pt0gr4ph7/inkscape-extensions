@@ -101,12 +101,12 @@ class AlignToGrid(inkex.EffectExtension):
                         )
 
             if x_attr is None and y_attr is None:
-                transform = Transform.translate(dx, dy)
+                transform = Transform.new().add_translate(dx, dy)
                 element.transform = transform @ element.transform
 
             return
 
-        transform = Transform.translate(dx, dy)
+        transform = Transform.new().add_translate(dx, dy)
         element.transform = transform @ element.transform
 
     def effect(self):
