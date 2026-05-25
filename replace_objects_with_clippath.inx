@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
     <name>Use geometry from clip path</name>
+    <description>Replace the selected objects with the geometry from their clip path, if it is a path.</description>
+
     <name lang="de">Durch Ausschneidemaske ersetzen</name>
+    <description lang="de">Ersetzt die ausgewählten Objekte durch die Geometrie ihrer Ausschneidemaske, falls diese eine Pfadgeometrie ist.</description>
 
     <id>io.github.cr7pt0gr4ph7.inkscape_extensions.replace_objects_with_clippath</id>
 

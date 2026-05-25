@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
     <name>Remove clip path from groups</name>
-    <name lang="de">Ausschneidemaske von Gruppen entfernen</name>
+    <description>Remove the clip path from the selected groups.</description>
+
+    <name lang="de">Ausschneidemaske entfernen (nur auf Gruppen anwenden)</name>
+    <description lang="de">Entfernt die Ausschneidemaske von den ausgewählten Gruppen.</description>
 
     <id>io.github.cr7pt0gr4ph7.inkscape_extensions.remove_group_clippath</id>
 

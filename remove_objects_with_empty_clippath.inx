@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
     <name>Remove objects with empty clip path</name>
+    <description>Remove objects that have a clip path that is empty, and thus will never be shown.</description>
+
     <name lang="de">Objekte mit leerer Ausschneidemaske entfernen</name>
+    <description lang="de">Entfernt Objekte, die eine leere Ausschneidemaske haben und daher nie angezeigt werden.</description>
 
     <id>io.github.cr7pt0gr4ph7.inkscape_extensions.remove_objects_with_empty_clippath</id>
 

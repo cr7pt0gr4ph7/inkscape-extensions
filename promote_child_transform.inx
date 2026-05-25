@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
-    <name>Promote Child Transform to Group</name>
-    <name lang="de">Transformation des enthaltenen Elements auf die Gruppe anwenden</name>
+    <name>Hoist Child Transform to Group</name>
+    <description>Hoist the transform of a child element to its parent group, adjusting the child transform to compensate.</description>
+
+    <name lang="de">Transformation auf Gruppe übertragen</name>
+    <description lang="de">Überträgt die Transformation eines Kindelements auf seine übergeordnete Gruppe und passt die Transformation des Kindelements an.</description>
 
     <id>io.github.cr7pt0gr4ph7.inkscape_extensions.promote_child_transform</id>
 

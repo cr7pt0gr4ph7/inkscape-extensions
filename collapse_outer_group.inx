@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
-    <name>Collapse Outer Group</name>
-    <name lang="de">Äußere Gruppen zusammenfassen</name>
+    <name>Flatten Nested Groups</name>
+    <name lang="de">Verschachtelte Gruppen auflösen</name>
+
+    <description>Remove the outermost group element and move all children to the parent of the group.</description>
+    <description lang="de">Entfernt das äußerste Gruppenelement und verschiebt alle Kinder in das Elternelement der Gruppe.</description>
 
     <id>io.github.cr7pt0gr4ph7.inkscape_extensions.collapse_outer_group</id>
 

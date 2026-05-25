@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
     <name>Remove grouping</name>
-    <name lang="de">Gruppierung entfernen</name>
+    <description>Remove the group element and move all children to the parent of the group.</description>
+
+    <name lang="de">Gruppierung auflösen</name>
+    <description lang="de">Entfernt das Gruppenelement und verschiebt alle Kinder in das Elternelement der Gruppe.></description>
 
     <id>io.github.cr7pt0gr4ph7.inkscape_extensions.replace_groups_with_children</id>
 
