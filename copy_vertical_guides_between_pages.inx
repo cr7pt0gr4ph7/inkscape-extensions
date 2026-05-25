@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
+    <name>Copy Vertical Guides Between Pages</name>
+    <id>copy.vertical.guides.between.pages</id>
+
+    <param name="source_page" type="int" min="1" max="9999" gui-text="Source page (1-based)">
+        1
+    </param>
+
+    <param name="target_pages" type="string" gui-text="Target pages (e.g. 1,2-4,7)">
+        2
+    </param>
+
+    <param name="remove_existing" type="bool" gui-text="Remove existing vertical guides from target pages">
+        false
+    </param>
+
+    <effect>
+        <object-type>all</object-type>
+        <effects-menu>
+            <submenu name="Pages"/>
+        </effects-menu>
+    </effect>
+
+    <script>
+        <command location="inx" interpreter="python">copy_vertical_guides_between_pages.py</command>
+    </script>
+</inkscape-extension>
