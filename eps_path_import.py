@@ -9,6 +9,9 @@ from inkex import PathElement, Group
 FLOAT_RE = r"[-+]?(?:\d*\.\d+|\d+\.?(?:\d*)?)(?:[eE][-+]?\d+)?"
 TOKEN_RE = re.compile(rf"{FLOAT_RE}|[A-Za-z_]+")
 
+ALL_MODE = "all"
+ONLY_CLOSED_MODE = "only_closed"
+ONLY_OPEN_MODE = "only_open"
 
 class EPSPath:
     def __init__(self):
@@ -196,6 +199,13 @@ class EPSPathImportExtension(inkex.EffectExtension):
             help="EPS file to parse"
         )
 
+        pars.add_argument(
+            "--import_mode",
+            type=str,
+            default="all",
+            help="Import mode for EPS geometry"
+        )
+
     def effect(self):
         eps_path = self.options.eps_file
 
@@ -226,9 +236,15 @@ class EPSPathImportExtension(inkex.EffectExtension):
         imported_count = 0
 
         for p in paths:
+            if self.options.import_mode == ONLY_CLOSED_MODE and not p.closed:
+                continue
+
+            if self.options.import_mode == ONLY_OPEN_MODE and p.closed:
+                continue
+
             svg_d = p.to_svg_path()
 
-            if not svg_d.strip():
+            if svg_d.strip() == "":
                 continue
 
             node = PathElement()

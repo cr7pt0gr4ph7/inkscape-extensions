@@ -3,11 +3,14 @@
     <name>EPS Geometry Import</name>
     <id>io.github.cr7pt0gr4ph7.inkscape_extensions.eps_path_import</id>
 
-    <param
-        name="eps_file"
-        type="path"
-        gui-text="EPS File"
-        mode="file">
+    <param name="eps_file" type="path" gui-text="EPS File" mode="file"></param>
+
+    <spacer />
+
+    <param name="import_mode" type="optiongroup" gui-text="Import Mode">
+        <option value="all" default="true">Import both open and closed paths</option>
+        <option value="only_closed">Import only closed paths</option>
+        <option value="only_open">Import only open paths</option>
     </param>
 
     <effect>
