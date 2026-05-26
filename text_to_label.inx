@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
+    <name>Text Content to Label</name>
+    <name lang="de">Textinhalt als Beschriftung setzen</name>
+
+    <id>io.github.cr7pt0gr4ph7.inkscape_extensions.text_to_label</id>
+
+    <param name="keep_existing" type="bool" gui-text="Keep existing labels">true</param>
+
+    <param name="recursive" type="bool" gui-text="Recurse into child elements">true</param>
+
+    <effect>
+        <object-type>all</object-type>
+        <effects-menu>
+            <submenu name="Text"/>
+        </effects-menu>
+    </effect>
+
+    <script>
+        <command location="inx" interpreter="python">text_to_label.py</command>
+    </script>
+</inkscape-extension>
