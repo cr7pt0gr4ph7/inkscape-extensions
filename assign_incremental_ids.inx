@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
+    <name>Assign new IDs</name>
+    <name lang="de">Neue IDs zuweisen</name>
+
+    <id>io.github.cr7pt0gr4ph7.assign_incremental_ids</id>
+
+    <param name="prefix" type="string" gui-text="Prefix">obj_</param>
+    <param name="suffix" type="string" gui-text="Suffix"></param>
+
+    <param name="start" type="int" min="0" max="100000000"
+           gui-text="Starting Number">1</param>
+
+    <param name="step" type="int" min="1" max="1000000"
+           gui-text="Step Size">1</param>
+
+    <param name="reverse" type="bool"
+           gui-text="Reverse document order">false</param>
+
+    <effect needs-live-preview="false">
+        <object-type>all</object-type>
+        <effects-menu>
+            <submenu name="Object"/>
+        </effects-menu>
+    </effect>
+
+    <script>
+        <command location="inx" interpreter="python">assign_incremental_ids.py</command>
+    </script>
+</inkscape-extension>
