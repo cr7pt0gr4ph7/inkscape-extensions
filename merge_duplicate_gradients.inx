@@ -8,6 +8,9 @@
 
     <id>io.github.cr7pt0gr4ph7.inkscape_extensions.merge_duplicate_gradients</id>
 
+    <param name="dedup_linear" type="bool" gui-text="Deduplicate linear gradients">true</param>
+    <param name="dedup_radial" type="bool" gui-text="Deduplicate radial gradients">true</param>
+
     <effect>
         <object-type>all</object-type>
         <effects-menu>
