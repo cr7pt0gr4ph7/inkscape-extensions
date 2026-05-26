@@ -23,15 +23,15 @@ from inkex import PathElement
 
 CLIP_URL_RE = re.compile(r"url\(#([^)]+)\)")
 
-MODE_GEOMETRY = "geometry_from_clip"
-MODE_REPLACE = "replace_with_clip_contents"
+MODE_KEEP_STYLE = "keep_style"
+MODE_REPLACE = "replace"
 
 class ClipPathTools(inkex.EffectExtension):
     def add_arguments(self, pars):
 
         pars.add_argument(
             "--mode",
-            default=self.MODE_GEOMETRY,
+            default=MODE_KEEP_STYLE,
             help="Operation mode",
         )
 
@@ -89,10 +89,10 @@ class ClipPathTools(inkex.EffectExtension):
                 )
                 continue
 
-            if self.options.mode == self.MODE_GEOMETRY:
+            if self.options.mode == MODE_KEEP_STYLE:
                 self.replace_geometry_from_clip(element, clip_path_elem)
 
-            elif self.options.mode == self.MODE_REPLACE:
+            elif self.options.mode == MODE_REPLACE:
                 self.replace_with_clip_contents(element, clip_path_elem)
 
             else:

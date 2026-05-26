@@ -9,8 +9,8 @@
     <id>io.github.cr7pt0gr4ph7.inkscape_extensions.replace_objects_with_clippath</id>
 
     <param name="mode" type="optiongroup" appearance="combo" gui-text="Operation">
-        <option value="geometry_from_clip">Use geometry from clipPath</option>
-        <option value="replace_with_clip_contents">Replace with clipPath contents</option>
+        <option value="keep_style">Keep styling (only use geometry from clip path)</option>
+        <option value="replace">Replace objects with clip path</option>
     </param>
 
     <param name="only_paths" type="bool" gui-text="Only process paths (i.e. ignore objects of other types)">true</param>
